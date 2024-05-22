@@ -3,77 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Token Balance</title>
+    <title>GIVERS GPU STATUS</title>
     <style>
-        .progress-container {
-            width: 100%;
-            background-color: #f3f3f3;
-            border-radius: 25px;
-            margin: 20px 0;
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
         }
-        .progress-bar {
-            width: 0%;
-            height: 30px;
-            background-color: #4caf50;
-            border-radius: 25px;
+
+        #container {
             text-align: center;
-            line-height: 30px;
-            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            position: relative;
         }
-        .address-container {
-            margin: 20px 0;
+
+        #title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .balanceWrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .balance {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+            color: blue;
+        }
+
+        .progressBarContainer {
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progressBar {
+            height: 100%;
+            background-color: #ff7e00;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .loading {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .githubIcon {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+
+        .githubIcon img {
+            width: 30px;
+            height: auto;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/tonweb/dist/tonweb.js"></script>
 </head>
 <body>
-    <div id="balances"></div>
+    <div id="container">
+        <div id="title">GIVERS $GPU STATUS</div>
+        <div id="balances"></div>
+        <div class="loading"></div>
 
     <script>
-        // Adresse autorisée
-        const address = "EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9";
-
-        // Initialise TonWeb
-        const TonWeb = tonweb.TonWeb;
-        const tonweb = new TonWeb(new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC')); // Utilise le noeud public toncenter
-
-        // Fonction pour obtenir et afficher le solde pour une adresse
-        async function getBalance(address) {
-            try {
-                const balance = await tonweb.provider.getBalance(address);
-                const totalSupply = 1000000; // Remplacez par le total des tokens émis
-                const balanceTon = balance / Math.pow(10, 9); // Convertit de nanoton à TON
-                const balancePercentage = (balanceTon / totalSupply) * 100;
-                return { address, balance: balanceTon, balancePercentage };
-            } catch (error) {
-                console.error('Error:', error);
-                return { address, error: 'An error occurred while fetching the balance.' };
-            }
+        async function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Fonction pour afficher le solde de l'adresse autorisée
-        async function displayBalance() {
+        async function displayBalances() {
+            const apiEndpoints = [
+                "https://tonapi.io/v2/accounts/EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9/jettons",
+                "https://tonapi.io/v2/accounts/EQC51U_4w6ItbeHvQs0RhuT3cwsytrDaJbG55BU-ZAzUfB4n/jettons",
+                "https://tonapi.io/v2/accounts/EQBT-Dbj7JkZltw-IVLbep0NTgaEGgSMUMIp4km8mYkPV6I8/jettons",
+                "https://tonapi.io/v2/accounts/EQD7GQw_BEo9KX7t1WpIa42KeQ3h8f4hVejip453l4qVLdNk/jettons",
+                "https://tonapi.io/v2/accounts/EQDEjyEOuJU5UggCaW-aN7_NxPF-ZULzcmCEY1AwEmzg5yuy/jettons",
+                "https://tonapi.io/v2/accounts/EQD5Viou03CU_oQKsyuneGv4Q2scxeLw-pfY4rIoa8sLlYtI/jettons",
+                "https://tonapi.io/v2/accounts/EQAWSBd3IiRJQiTWr2qjYNgUFCA0u6zSs5H6S3ghOeMp0s-r/jettons",
+                "https://tonapi.io/v2/accounts/EQCklqxLokjCHkujRzAZMlaGM4JSUHS3IpUhqQ6y8mzD2DiL/jettons",
+                "https://tonapi.io/v2/accounts/EQAD7ylSr3X0TVUrjtpaaLhEwZYi9ucCAjdhjANF4SLpFcrr/jettons",
+                "https://tonapi.io/v2/accounts/EQAdugQfgubyVOtzcfn-ca7WEyepnp7BYP5oS0w5A15zIH78/jettons"
+            ];
             const balancesContainer = document.getElementById('balances');
-            const balanceData = await getBalance(address);
-            const addressContainer = document.createElement('div');
-            addressContainer.classList.add('address-container');
-            
-            if (balanceData.error) {
-                addressContainer.innerHTML = `<strong>${balanceData.address}</strong>: ${balanceData.error}`;
-            } else {
-                addressContainer.innerHTML = `
-                    <strong>${balanceData.address}</strong>: ${balanceData.balance.toFixed(2)} TON
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${balanceData.balancePercentage}%;">${balanceData.balancePercentage.toFixed(2)}%</div>
-                    </div>
-                `;
-            }
+            const loadingIndicator = document.querySelector('.loading');
+            loadingIndicator.style.display = 'block'; // Afficher l'indicateur de chargement
 
-            balancesContainer.appendChild(addressContainer);
+            try {
+                for (let i = 0; i < apiEndpoints.length; i++) {
+                    const response = await fetch(apiEndpoints[i]);
+                    const data = await response.json();
+
+                    if (data.balances && data.balances.length > 0) {
+                        const balanceNanoTons = data.balances[0].balance;
+                        const balanceTons = balanceNanoTons / Math.pow(10, 9);
+                        const formattedBalance = balanceTons.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+
+                        const balanceElement = document.createElement('div');
+                        balanceElement.classList.add('balance');
+                        balanceElement.innerText = `${i + 1} - ${formattedBalance} GPU`;
+                        balanceElement.addEventListener('click', () => {
+                            const address = data.balances[0].wallet_address.address;
+                            window.location.href = `https://tonviewer.com/${address}`;
+                        });
+                        balancesContainer.appendChild(balanceElement);
+
+                        const progressBarContainer = document.createElement('div');
+                        progressBarContainer.classList.add('progressBarContainer');
+                        const progressBar = document.createElement('div');
+                        progressBar.classList.add('progressBar');
+                        progressBarContainer.appendChild(progressBar);
+                        balancesContainer.appendChild(progressBarContainer);
+
+                        await sleep(3000); // Délai de 3 secondes avant chaque requête
+                        updateProgressBar(progressBar, balanceTons);
+                    } else {
+                        console.error('No token balance data available for', apiEndpoints[i]);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching balance:', error);
+                balancesContainer.innerText = "Error fetching balance data";
+            } finally {
+                loadingIndicator.style.display = 'none'; // Cacher l'indicateur de chargement une fois que toutes les données sont chargées
+            }
         }
 
-        // Appeler la fonction pour afficher le solde lors du chargement de la page
-        window.onload = displayBalance;
+        function updateProgressBar(progressBar, balanceTons) {
+            const maxBalance = 100000000;
+            const percentage = (balanceTons / maxBalance) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Document loaded');
+            displayBalances();
+        });
     </script>
 </body>
 </html>
