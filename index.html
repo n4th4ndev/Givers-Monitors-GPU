@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIVERS GPU STATUS</title>
+    <title>GIVERS $GPU STATUS</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,41 +17,43 @@
 
         #container {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            width: 90%;
+            max-width: 300px; /* Réduire la largeur pour les appareils mobiles */
             position: relative;
         }
 
         #title {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 20px; /* Réduire la taille du titre pour les appareils mobiles */
+            margin-bottom: 10px; /* Réduire l'espace sous le titre */
+            font-weight: bold;
         }
 
         .balanceWrapper {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            margin-bottom: 20px;
+            margin-bottom: 5px; /* Réduire l'espacement entre les soldes */
         }
 
         .balance {
-            font-size: 20px;
+            font-size: 14px; /* Réduire la taille de la police pour les appareils mobiles */
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 5px; /* Réduire l'espacement entre le solde et la barre de progression */
             cursor: pointer;
             text-decoration: underline;
             color: blue;
         }
 
         .progressBarContainer {
-            height: 20px;
+            height: 6px; /* Réduire la hauteur de la barre de progression */
             background-color: #ddd;
-            border-radius: 10px;
+            border-radius: 3px; /* Réduire le rayon de bordure */
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 5px; /* Réduire l'espacement entre les barres de progression */
         }
 
         .progressBar {
@@ -61,14 +63,14 @@
         }
 
         .loading {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #3498db;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
             margin: auto;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         @keyframes spin {
@@ -85,14 +87,14 @@
         }
 
         .githubIcon img {
-            width: 30px;
+            width: 20px; /* Réduire la taille de l'icône GitHub */
             height: auto;
         }
     </style>
 </head>
 <body>
     <div id="container">
-        <div id="title">GIVERS $GPU STATUS</div>
+        <div id="title"><strong>GIVERS $GPU STATUS</strong></div>
         <div id="balances"></div>
         <div class="loading"></div>
 
@@ -114,6 +116,7 @@
                 "https://tonapi.io/v2/accounts/EQAD7ylSr3X0TVUrjtpaaLhEwZYi9ucCAjdhjANF4SLpFcrr/jettons",
                 "https://tonapi.io/v2/accounts/EQAdugQfgubyVOtzcfn-ca7WEyepnp7BYP5oS0w5A15zIH78/jettons"
             ];
+
             const balancesContainer = document.getElementById('balances');
             const loadingIndicator = document.querySelector('.loading');
             loadingIndicator.style.display = 'block'; // Afficher l'indicateur de chargement
