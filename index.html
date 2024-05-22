@@ -92,7 +92,7 @@
 
         async function displayBalances() {
             const apiEndpoints = [
-              "https://tonapi.io/v2/accounts/EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9/jettons",
+             "https://tonapi.io/v2/accounts/EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9/jettons",
                 "https://tonapi.io/v2/accounts/EQC51U_4w6ItbeHvQs0RhuT3cwsytrDaJbG55BU-ZAzUfB4n/jettons",
                 "https://tonapi.io/v2/accounts/EQBT-Dbj7JkZltw-IVLbep0NTgaEGgSMUMIp4km8mYkPV6I8/jettons",
                 "https://tonapi.io/v2/accounts/EQD7GQw_BEo9KX7t1WpIa42KeQ3h8f4hVejip453l4qVLdNk/jettons",
@@ -106,7 +106,7 @@
 
             const balancesContainer = document.getElementById('balances');
             const loadingIndicator = document.querySelector('.loading');
-            loadingIndicator.style.display = 'block'; 
+            loadingIndicator.style.display = 'block'; // Afficher l'indicateur de chargement
 
             try {
                 for (let i = 0; i < apiEndpoints.length; i++) {
@@ -134,7 +134,7 @@
                         progressBarContainer.appendChild(progressBar);
                         balancesContainer.appendChild(progressBarContainer);
 
-                        await sleep(2000);
+                        await sleep(2000); // Délai de 2 secondes avant chaque requête
                         updateProgressBar(progressBar, balanceTons);
                     } else {
                         console.error('No token balance data available for', apiEndpoints[i]);
@@ -144,7 +144,7 @@
                 console.error('Error fetching balance:', error);
                 balancesContainer.innerText = "Error fetching balance data";
             } finally {
-                loadingIndicator.style.display = 'none'; 
+                loadingIndicator.style.display = 'none'; // Cacher l'indicateur de chargement une fois que toutes les données sont chargées
             }
         }
 
