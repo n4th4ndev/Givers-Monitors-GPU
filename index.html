@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON Token Balance</title>
+    <style>
+        .progress-container {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 25px;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 30px;
+            background-color: #4caf50;
+            border-radius: 25px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="text" id="address" placeholder="Enter TON Address">
+        <button onclick="getBalance()">Check Balance</button>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">0%</div>
+    </div>
+    <script>
+        async function getBalance() {
+            const address = document.getElementById('address').value;
+            const apiUrl = `https://api.ton.sh/getAccount/${address}`;  // Remplacez par l'URL réelle de l'API
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const balance = data.balance || 0;
+                    const totalSupply = 1000000;  // Remplacez par le total des tokens émis
+                    const progressBar = document.getElementById('progress-bar');
+                    const balancePercentage = (balance / totalSupply) * 100;
+                    progressBar.style.width = balancePercentage + '%';
+                    progressBar.innerHTML = balancePercentage.toFixed(2) + '%';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the balance.');
+            }
+        }
+    </script>
+</body>
+</html>
