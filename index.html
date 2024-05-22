@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Token Balances</title>
+    <title>TON Token Balance</title>
     <style>
         .progress-container {
             width: 100%;
@@ -30,11 +30,8 @@
     <div id="balances"></div>
 
     <script>
-        // Liste des adresses autorisées
-        const allowedAddresses = [
-            "EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9", // Remplacez par des adresses réelles
-    
-        ];
+        // Adresse autorisée
+        const address = "EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9";
 
         // Initialise TonWeb
         const TonWeb = tonweb.TonWeb;
@@ -54,31 +51,29 @@
             }
         }
 
-        // Fonction pour afficher les soldes des adresses autorisées
-        async function displayBalances() {
+        // Fonction pour afficher le solde de l'adresse autorisée
+        async function displayBalance() {
             const balancesContainer = document.getElementById('balances');
-            for (const address of allowedAddresses) {
-                const balanceData = await getBalance(address);
-                const addressContainer = document.createElement('div');
-                addressContainer.classList.add('address-container');
-                
-                if (balanceData.error) {
-                    addressContainer.innerHTML = `<strong>${balanceData.address}</strong>: ${balanceData.error}`;
-                } else {
-                    addressContainer.innerHTML = `
-                        <strong>${balanceData.address}</strong>: ${balanceData.balance.toFixed(2)} TON
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${balanceData.balancePercentage}%;">${balanceData.balancePercentage.toFixed(2)}%</div>
-                        </div>
-                    `;
-                }
-
-                balancesContainer.appendChild(addressContainer);
+            const balanceData = await getBalance(address);
+            const addressContainer = document.createElement('div');
+            addressContainer.classList.add('address-container');
+            
+            if (balanceData.error) {
+                addressContainer.innerHTML = `<strong>${balanceData.address}</strong>: ${balanceData.error}`;
+            } else {
+                addressContainer.innerHTML = `
+                    <strong>${balanceData.address}</strong>: ${balanceData.balance.toFixed(2)} TON
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${balanceData.balancePercentage}%;">${balanceData.balancePercentage.toFixed(2)}%</div>
+                    </div>
+                `;
             }
+
+            balancesContainer.appendChild(addressContainer);
         }
 
-        // Appeler la fonction pour afficher les soldes lors du chargement de la page
-        window.onload = displayBalances;
+        // Appeler la fonction pour afficher le solde lors du chargement de la page
+        window.onload = displayBalance;
     </script>
 </body>
 </html>
