@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Token Balance</title>
+    <title>TON Token Balances</title>
     <style>
         .progress-container {
             width: 100%;
@@ -20,38 +20,65 @@
             line-height: 30px;
             color: white;
         }
+        .address-container {
+            margin: 20px 0;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/tonweb/dist/tonweb.js"></script>
 </head>
 <body>
-    <div>
-        <input type="text" id="address" placeholder="Enter TON Address">
-        <button onclick="getBalance()">Check Balance</button>
-    </div>
-    <div class="progress-container">
-        <div class="progress-bar" id="progress-bar">0%</div>
-    </div>
+    <div id="balances"></div>
+
     <script>
-        async function getBalance() {
-            const address = document.getElementById('address').value;
-            const apiUrl = `https://api.ton.sh/getAccount/${address}`;  // Remplacez par l'URL réelle de l'API
+        // Liste des adresses autorisées
+        const allowedAddresses = [
+            "EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9" // Remplacez par des adresses réelles
+    
+        ];
+
+        // Initialise TonWeb
+        const TonWeb = tonweb.TonWeb;
+        const tonweb = new TonWeb(new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC')); // Utilise le noeud public toncenter
+
+        // Fonction pour obtenir et afficher le solde pour une adresse
+        async function getBalance(address) {
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    const balance = data.balance || 0;
-                    const totalSupply = 1000000;  // Remplacez par le total des tokens émis
-                    const progressBar = document.getElementById('progress-bar');
-                    const balancePercentage = (balance / totalSupply) * 100;
-                    progressBar.style.width = balancePercentage + '%';
-                    progressBar.innerHTML = balancePercentage.toFixed(2) + '%';
-                }
+                const balance = await tonweb.provider.getBalance(address);
+                const totalSupply = 1000000; // Remplacez par le total des tokens émis
+                const balanceTon = balance / Math.pow(10, 9); // Convertit de nanoton à TON
+                const balancePercentage = (balanceTon / totalSupply) * 100;
+                return { address, balance: balanceTon, balancePercentage };
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while fetching the balance.');
+                return { address, error: 'An error occurred while fetching the balance.' };
             }
         }
+
+        // Fonction pour afficher les soldes des adresses autorisées
+        async function displayBalances() {
+            const balancesContainer = document.getElementById('balances');
+            for (const address of allowedAddresses) {
+                const balanceData = await getBalance(address);
+                const addressContainer = document.createElement('div');
+                addressContainer.classList.add('address-container');
+                
+                if (balanceData.error) {
+                    addressContainer.innerHTML = `<strong>${balanceData.address}</strong>: ${balanceData.error}`;
+                } else {
+                    addressContainer.innerHTML = `
+                        <strong>${balanceData.address}</strong>: ${balanceData.balance.toFixed(2)} TON
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${balanceData.balancePercentage}%;">${balanceData.balancePercentage.toFixed(2)}%</div>
+                        </div>
+                    `;
+                }
+
+                balancesContainer.appendChild(addressContainer);
+            }
+        }
+
+        // Appeler la fonction pour afficher les soldes lors du chargement de la page
+        window.onload = displayBalances;
     </script>
 </body>
 </html>
