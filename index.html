@@ -6,71 +6,64 @@
     <title>GIVERS $GPU STATUS</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
         }
 
-        #container {
-            text-align: center;
-            padding: 10px;
+        .container {
+            width: 90%;
+            max-width: 600px;
             border-radius: 10px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 300px; /* Réduire la largeur pour les appareils mobiles */
-            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
-        #title {
-            font-size: 20px; /* Réduire la taille du titre pour les appareils mobiles */
-            margin-bottom: 10px; /* Réduire l'espace sous le titre */
+        .title {
+            font-size: 24px;
             font-weight: bold;
-        }
-
-        .balanceWrapper {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            margin-bottom: 5px; /* Réduire l'espacement entre les soldes */
+            margin-bottom: 20px;
+            color: #333;
         }
 
         .balance {
-            font-size: 14px; /* Réduire la taille de la police pour les appareils mobiles */
+            font-size: 18px;
             font-weight: bold;
-            margin-right: 5px; /* Réduire l'espacement entre le solde et la barre de progression */
             cursor: pointer;
+            color: #007bff;
             text-decoration: underline;
-            color: blue;
+            margin-bottom: 10px;
         }
 
-        .progressBarContainer {
-            height: 6px; /* Réduire la hauteur de la barre de progression */
+        .progress-bar-container {
+            height: 10px;
             background-color: #ddd;
-            border-radius: 3px; /* Réduire le rayon de bordure */
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 5px; /* Réduire l'espacement entre les barres de progression */
+            margin-bottom: 10px;
         }
 
-        .progressBar {
+        .progress-bar {
             height: 100%;
             background-color: #ff7e00;
             transition: width 0.3s ease-in-out;
         }
 
         .loading {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 4px solid #ff7e00;
+            border-top: 4px solid #f3f3f3;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
             margin: auto;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -78,25 +71,19 @@
             100% { transform: rotate(360deg); }
         }
 
-        .githubIcon {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-        }
-
-        .githubIcon img {
-            width: 20px; /* Réduire la taille de l'icône GitHub */
-            height: auto;
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="title"><strong>GIVERS $GPU STATUS</strong></div>
+    <div class="container">
+        <div class="title">GIVERS $GPU STATUS</div>
         <div id="balances"></div>
         <div class="loading"></div>
+    </div>
 
     <script>
         async function sleep(ms) {
@@ -105,7 +92,7 @@
 
         async function displayBalances() {
             const apiEndpoints = [
-                "https://tonapi.io/v2/accounts/EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9/jettons",
+              "https://tonapi.io/v2/accounts/EQBUmN2uinHEFjBymG3SV010oeDABQ_8R-z1PRuV1YLRImL9/jettons",
                 "https://tonapi.io/v2/accounts/EQC51U_4w6ItbeHvQs0RhuT3cwsytrDaJbG55BU-ZAzUfB4n/jettons",
                 "https://tonapi.io/v2/accounts/EQBT-Dbj7JkZltw-IVLbep0NTgaEGgSMUMIp4km8mYkPV6I8/jettons",
                 "https://tonapi.io/v2/accounts/EQD7GQw_BEo9KX7t1WpIa42KeQ3h8f4hVejip453l4qVLdNk/jettons",
@@ -119,7 +106,7 @@
 
             const balancesContainer = document.getElementById('balances');
             const loadingIndicator = document.querySelector('.loading');
-            loadingIndicator.style.display = 'block'; // Afficher l'indicateur de chargement
+            loadingIndicator.style.display = 'block'; 
 
             try {
                 for (let i = 0; i < apiEndpoints.length; i++) {
@@ -141,13 +128,13 @@
                         balancesContainer.appendChild(balanceElement);
 
                         const progressBarContainer = document.createElement('div');
-                        progressBarContainer.classList.add('progressBarContainer');
+                        progressBarContainer.classList.add('progress-bar-container');
                         const progressBar = document.createElement('div');
-                        progressBar.classList.add('progressBar');
+                        progressBar.classList.add('progress-bar');
                         progressBarContainer.appendChild(progressBar);
                         balancesContainer.appendChild(progressBarContainer);
 
-                        await sleep(3000); // Délai de 3 secondes avant chaque requête
+                        await sleep(2000);
                         updateProgressBar(progressBar, balanceTons);
                     } else {
                         console.error('No token balance data available for', apiEndpoints[i]);
@@ -157,7 +144,7 @@
                 console.error('Error fetching balance:', error);
                 balancesContainer.innerText = "Error fetching balance data";
             } finally {
-                loadingIndicator.style.display = 'none'; // Cacher l'indicateur de chargement une fois que toutes les données sont chargées
+                loadingIndicator.style.display = 'none'; 
             }
         }
 
@@ -168,7 +155,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Document loaded');
             displayBalances();
         });
     </script>
